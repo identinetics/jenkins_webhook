@@ -2,15 +2,16 @@
 #-*- coding:utf-8 -*-
 
 
-import BaseHTTPServer
+import json
 import sys
 import time
-import urlparse
-import json
+import werkzeug.serving
+from werkzeug.wrappers import BaseRequest, BaseResponse
+from werkzeug.exceptions import HTTPException, NotFound
 
 
-HOST_NAME = 0.0.0.0
-PORT_NUMBER = 8080
+HOST_NAME = '0.0.0.0'
+PORT_NUMBER = 8082
 
 
 def handle_hook(payload):
@@ -18,35 +19,57 @@ def handle_hook(payload):
         fd.write(payload)
 
 
-class HookHandler(BaseHTTPServer.BaseHTTPRequestHandler):
-    server_version = "HookHandler/0.1"
-    def do_GET(s):
-        s.send_response(200)
-        s.wfile.write('Hello!')
+class AppHandler():
+    def get_handler(self, req):
+        json = '[{"key": "val"}]'
+        return BaseResponse(json,
+                            mimetype='application/json',
+                            direct_passthrough=False)
 
-    def do_POST(s):
-        # Check that the IP is within the Github ranges
-        if not any(s.client_address[0].startswith(IP)
-                   for IP in ('192.30.252', '192.30.253', '192.30.254', '192.30.255')):
-            s.send_error(403)
+    def post_handler(self, req):
+        # Check that the IP is within the Github ranges (if not here, then in proxy)
+        #if not any(req.headers.environ['REMOTE_ADDR'][0].startswith(IP)
+        #           for IP in ('192.30.252', '192.30.253', '192.30.254', '192.30.255')):
+        #    s.send_error(403)
 
-        length = int(s.headers['Content-Length'])
-        post_data = urlparse.parse_qs(s.rfile.read(length).decode('utf-8'))
-        #payload = json.loads(post_data['payload'][0])
+        if req.path.startswith('/github'):
+            length = int(req.headers.environ['CONTENT_LENGTH'])
+            post_data = req.data.decode(req.charset)
+            #payload = json.loads(post_data['payload'][0])
 
-        handle_hook(post_data)
+            handle_hook(post_data)
+            json = '["OK"]'
+            return BaseResponse(json,
+                                mimetype='application/json',
+                                direct_passthrough=False)
+        else:
+            response = BaseResponse('Path not found', mimetype='text/plain')
+            response.status_code = 404
+            return response
 
-        s.send_response(200)
+
+    def wsgi_application(self, environ, start_response):
+        req = BaseRequest(environ)
+        if req.method == 'POST':
+            resp = self.post_handler(req)
+        elif req.method == 'GET':
+            resp = self.get_handler(req)
+        else:
+            response = BaseResponse('HTTP method not supported', mimetype='text/plain')
+            response.status_code = 400
+            return response
+        return resp(environ, start_response)
 
 
 if __name__ == '__main__':
-    server_class = BaseHTTPServer.HTTPServer
-    httpd = server_class((HOST_NAME, PORT_NUMBER), HookHandler)
-    print time.asctime(), "Server Starts - %s:%s" % (HOST_NAME, PORT_NUMBER)
+    app_handler = AppHandler()
+    print(time.asctime(), "Server starting %s:%s" % (HOST_NAME, PORT_NUMBER))
     try:
-        httpd.serve_forever()
+        werkzeug.serving.run_simple(
+            HOST_NAME,
+            PORT_NUMBER,
+            app_handler.wsgi_application,
+            use_debugger=True)
     except KeyboardInterrupt:
         pass
-    httpd.server_close()
-    print time.asctime(), "Server Stops - %s:%s" % (HOST_NAME, PORT_NUMBER)
-
+    print(time.asctime(), "Server terminating %s:%s" % (HOST_NAME, PORT_NUMBER))
