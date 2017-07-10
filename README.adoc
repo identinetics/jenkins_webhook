@@ -1,0 +1,35 @@
+= Jenkins/Git Webhook/Polling Proxy
+
+This piece implements (1) a webhook server to record Github Commit/PR callbacks, and (2) a
+polling script triggerning Jenkins build jobs.
+
+== Use Case/Concept
+
+Given a Jenkins server that has no Internet-facing REST-API, polling is the next option to
+automatically trigger build jobs. However, the polling overhead could grow and could run into
+timeing issues because of
+
+ - A large number of repositories, branches
+ - Multiple event types (commit, PR)
+ - Short polling intervals
+ - Multiple Jenkins servers (central + local dev, customer-site QA instances)
+
+To reduce the communication overhead between Jenkins and Github the webhook proxy
+will collect the events in a single data structure that can be fetched with a single GET request.
+
+The polling script will check for new events and trigger Jenkins builds accordingly.
+
+== Webhook Proxy
+
+The webhook proxy will store the JSON data received from each POST request under an owner/repo/branch
+path, overwriting previous events for the same repo. After each call it will (re-)create a persistent
+(JSON) dictionary containing the most recent event for each owner/repo/branch. This status page can
+be read from /status at the proxy web server.
+
+
+== Polling Script
+
+The polling script will compare the status page with the previous version. If there is a different
+entry for a owner/repo/branch, it will trigger a build.
+
+Note: Currently there is no check for already running builds.
