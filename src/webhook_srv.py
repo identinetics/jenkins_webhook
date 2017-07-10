@@ -7,11 +7,10 @@ import sys
 import time
 import werkzeug.serving
 from werkzeug.wrappers import BaseRequest, BaseResponse
-from werkzeug.exceptions import HTTPException, NotFound
 
 
 HOST_NAME = '0.0.0.0'
-PORT_NUMBER = 8082
+PORT_NUMBER = 8080
 
 
 def handle_hook(payload):
