@@ -19,7 +19,7 @@ will collect the events in a single data structure that can be fetched with a si
 
 The polling script will check for new events and trigger Jenkins builds accordingly.
 
-image::/img/jenkins-webhook.png
+image::/img/jenkins-webhook.png[]
 
 == Webhook Proxy
 
