@@ -1,0 +1,66 @@
+{
+   "after":"98248f0e892ce4e4e37411730ac98b53f2aa1261",
+   "base_ref":"refs/heads/br2",
+   "before":"0000000000000000000000000000000000000000",
+   "commits":[
+
+   ],
+   "compare":"https://github.com/nevik/testrepo/compare/tag2",
+   "created":true,
+   "deleted":false,
+   "forced":true,
+   "head_commit":{
+      "added":[
+         "otherfile"
+      ],
+      "author":{
+         "email":"hai.kataker@gmx.de",
+         "name":"Nevik Rehnel",
+         "username":"nevik"
+      },
+      "committer":{
+         "email":"hai.kataker@gmx.de",
+         "name":"Nevik Rehnel",
+         "username":"nevik"
+      },
+      "distinct":true,
+      "id":"98248f0e892ce4e4e37411730ac98b53f2aa1261",
+      "message":"commit 4",
+      "modified":[
+
+      ],
+      "removed":[
+
+      ],
+      "timestamp":"2013-07-06T03:05:29-07:00",
+      "url":"https://github.com/nevik/testrepo/commit/98248f0e892ce4e4e37411730ac98b53f2aa1261"
+   },
+   "pusher":{
+      "email":"hai.kataker@gmx.de",
+      "name":"nevik"
+   },
+   "ref":"refs/tags/tag2",
+   "repository":{
+      "created_at":1373104990,
+      "description":"",
+      "fork":false,
+      "forks":0,
+      "has_downloads":true,
+      "has_issues":true,
+      "has_wiki":true,
+      "id":11216467,
+      "master_branch":"master",
+      "name":"testrepo",
+      "open_issues":0,
+      "owner":{
+         "email":"hai.kataker@gmx.de",
+         "name":"nevik"
+      },
+      "private":false,
+      "pushed_at":1373105191,
+      "size":144,
+      "stargazers":0,
+      "url":"https://github.com/nevik/testrepo",
+      "watchers":0
+   }
+}

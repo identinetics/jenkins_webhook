@@ -26,10 +26,12 @@ path, overwriting previous events for the same repo. After each call it will (re
 (JSON) dictionary containing the most recent event for each owner/repo/branch. This status page can
 be read from /status at the proxy web server.
 
+Authentication: configure a secret path (e.g. 15 char random string) for GET and POST operations.
+
 
 == Polling Script
 
-The polling script will compare the status page with the previous version. If there is a different
+The polling script trigger_jenkins.py will compare the status page with the previous version. If there is a different
 entry for a owner/repo/branch, it will trigger a build.
 
 Note: Currently there is no check for already running builds.
