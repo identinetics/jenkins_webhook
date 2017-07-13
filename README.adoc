@@ -19,14 +19,16 @@ will collect the events in a single data structure that can be fetched with a si
 
 The polling script will check for new events and trigger Jenkins builds accordingly.
 
+image::/img/jenkins-webhook.png
+
 == Webhook Proxy
 
-The webhook proxy will store the JSON data received from each POST request under an owner/repo/branch
+The webhook proxy will store the JSON data received from each POST request in a owner/repo/branch
 path, overwriting previous events for the same repo. After each call it will (re-)create a persistent
 (JSON) dictionary containing the most recent event for each owner/repo/branch. This status page can
 be read from /status at the proxy web server.
 
-Authentication: configure a secret path (e.g. 15 char random string) for GET and POST operations.
+Authentication: configure a secret path (e.g. 16 char random string) for GET and POST operations.
 
 
 == Polling Script
@@ -35,3 +37,7 @@ The polling script trigger_jenkins.py will compare the status page with the prev
 entry for a owner/repo/branch, it will trigger a build.
 
 Note: Currently there is no check for already running builds.
+
+== Deployment
+
+cf. https://github.com/identinetics/d-jenkins-webhook.git

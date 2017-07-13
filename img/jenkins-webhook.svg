@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="403 120 957 480" width="957pt" height="40pc" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <metadata> Produced by OmniGraffle 7.4 
+    <dc:date>2017-07-13 05:23:21 +0000</dc:date>
+  </metadata>
+  <defs>
+    <font-face font-family="Helvetica Neue" font-size="16" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="500">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue"/>
+      </font-face-src>
+    </font-face>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="black">
+      <g>
+        <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <font-face font-family="Helvetica" font-size="12" units-per-em="1000" underline-position="-75.68359" underline-thickness="49.316406" slope="0" x-height="522.9492" cap-height="717.28516" ascent="770.0195" descent="-229.98047" font-weight="500">
+      <font-face-src>
+        <font-face-name name="Helvetica"/>
+      </font-face-src>
+    </font-face>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker_2" viewBox="-9 -4 10 8" markerWidth="10" markerHeight="8" color="black">
+      <g>
+        <path d="M -8 0 L 0 3 L 0 -3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+  </defs>
+  <g stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1">
+    <title>Canvas 1</title>
+    <rect fill="white" width="956.4228" height="479.0703"/>
+    <g>
+      <title>Layer 1</title>
+      <rect x="404.01444" y="240.60057" width="150" height="135" fill="white"/>
+      <rect x="404.01444" y="240.60057" width="150" height="135" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <text transform="translate(409.01444 298.87657)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" fill="black" x="26.728" y="15" textLength="86.544">GitHub.com</tspan>
+      </text>
+      <rect x="669.5627" y="240.10057" width="150" height="135" fill="white"/>
+      <rect x="669.5627" y="240.10057" width="150" height="135" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <text transform="translate(674.5627 298.37657)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" fill="black" x="13.56" y="15" textLength="14.816">W</tspan>
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" fill="black" x="27.464" y="15" textLength="73.792">ebhook Pr</tspan>
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" fill="black" x="100.968" y="15" textLength="25.472">oxy</tspan>
+      </text>
+      <line x1="554.01444" y1="307.95935" x2="659.66275" y2="307.76043" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <text transform="translate(1107 572.5)" fill="black">
+        <tspan font-family="Helvetica" font-size="12" font-weight="500" x="6.832031" y="11" textLength="25.335938">User</tspan>
+      </text>
+      <circle cx="1126.4997" cy="539.7517" r="6.750711" fill="white"/>
+      <circle cx="1126.4997" cy="539.7517" r="6.750711" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <line x1="1126.5" y1="546.501" x2="1126.5" y2="556.616" stroke="black" stroke-linecap="butt" stroke-linejoin="round" stroke-width="1"/>
+      <line x1="1126.5" y1="556.616" x2="1119" y2="570.117" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <line x1="1126.5" y1="556.616" x2="1134" y2="570.117" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <line x1="1134" y1="552.001" x2="1119" y2="551.876" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <path d="M 1104 560.5 L 474.10547 560.5 L 474.10547 561.83594 L 479.01444 561.83594 L 479.01444 385.50057" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <rect x="447.01444" y="458.8717" width="64" height="30" fill="white"/>
+      <text transform="translate(452.01444 464.6477)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" fill="black" x=".168" y="15" textLength="53.664">commit</tspan>
+      </text>
+      <rect x="571.8104" y="292.8543" width="76" height="30" fill="white"/>
+      <text transform="translate(576.8104 298.6303)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" fill="black" x=".112" y="15" textLength="65.776">webhook</tspan>
+      </text>
+      <rect x="934.2248" y="240.5" width="150" height="135" fill="white"/>
+      <rect x="934.2248" y="240.5" width="150" height="135" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <text transform="translate(939.2248 298.776)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="18" y="15" textLength="104">trigger_jenkins</tspan>
+      </text>
+      <line x1="819.5627" y1="307.71376" x2="924.3248" y2="307.87187" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <rect x="1192.3521" y="241" width="150" height="135" fill="white"/>
+      <rect x="1192.3521" y="241" width="150" height="135" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <text transform="translate(1197.3521 299.276)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="42.728" y="15" textLength="54.544">Jenkins</tspan>
+      </text>
+      <line x1="1084.2248" y1="308.14528" x2="1182.4521" y2="308.33555" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <rect x="1096.4373" y="293.2464" width="80" height="30" fill="white"/>
+      <text transform="translate(1101.4373 299.0224)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x=".336" y="15" textLength="40.288">REST</tspan>
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="38.56" y="15" textLength="31.104">-API</tspan>
+      </text>
+      <text transform="translate(931.3912 210.776)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x=".496" y="15" textLength="105.2">Jenkins Server</tspan>
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="104.224" y="15" textLength="68.464">, not Inter</tspan>
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="172.976" y="15" textLength="70.528">net facing</tspan>
+      </text>
+      <rect x="913.4373" y="205" width="446" height="200" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <text transform="translate(879 142.776)" fill="#b1001c">
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" fill="#b1001c" x=".304" y="15" textLength="111.392">Private network</tspan>
+      </text>
+      <path d="M 1158.9 560.6142 L 1268.3521 561 L 1268.3521 385.9" marker-end="url(#FilledArrow_Marker)" marker-start="url(#FilledArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <rect x="1236.8521" y="458.8717" width="63" height="30" fill="white"/>
+      <text transform="translate(1241.8521 464.6477)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x=".436" y="15" textLength="14.816">W</tspan>
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x="14.34" y="15" textLength="38.224">eb UI</tspan>
+      </text>
+      <line x1="866" y1="121.92969" x2="866" y2="599" stroke="#b1001c" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke-dasharray="4,4"/>
+      <text transform="translate(741.9908 142.776)" fill="#b1001c">
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" fill="#b1001c" x=".316" y="15" textLength="106.368">Public network</tspan>
+      </text>
+      <rect x="845.9307" y="292.79732" width="58" height="30" fill="white"/>
+      <text transform="translate(850.9307 298.57332)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="16" font-weight="500" x=".296" y="15" textLength="47.408">polling</tspan>
+      </text>
+    </g>
+  </g>
+</svg>
