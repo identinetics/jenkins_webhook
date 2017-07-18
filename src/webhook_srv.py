@@ -12,8 +12,13 @@ from werkzeug.wrappers import BaseRequest, BaseResponse
 
 def main():
     invocation = Invocation()
+    if True or invocation.args.verbose:
+        print(now_iso8601(), "Server starting %s:%s" % (invocation.args.hostname, invocation.args.port))
+        print('getpath: %s' % invocation.args.getpath.strip('/'))
+        print('postpath: %s' % invocation.args.postpath.strip('/'))
+        print('ownerlist: %s' % invocation.args.ownerlist)
+        print('datadir: %s' % invocation.args.datadir)
     app_handler = AppHandler(invocation.args)
-    print(now_iso8601(), "Server starting %s:%s" % (invocation.args.hostname, invocation.args.port))
     try:
         werkzeug.serving.run_simple(
             invocation.args.hostname,
@@ -69,12 +74,13 @@ class AppHandler():
 
     def wsgi_application(self, environ, start_response):
         req = BaseRequest(environ)
-        if req.method == 'GET' and req.path == self.args.getpath:
+        if req.method == 'GET' and req.path.strip('/') == self.args.getpath:
             resp = self.get_handler(req)
-        elif req.method == 'POST' and req.path == self.args.postpath:
+        elif req.method == 'POST' and req.path.strip('/') == self.args.postpath:
             resp = self.post_handler(req)
         else:
-            resp = BaseResponse('Invalid path or HTTP method not supported', mimetype='text/plain')
+            resp = BaseResponse('Invalid path (%s) or HTTP method (%s) not supported' % (req.path, req.method),
+                                mimetype='text/plain')
             resp.status_code = 400
         return resp(environ, start_response)
 
