@@ -73,7 +73,7 @@ class TriggerJenkins:
             logging.debug('previous status:' + str(status_prev))
         status_current = self.get_commit_messages()
         if status_current == status_prev:
-            logging.info('nothing new')
+            logging.debug('nothing new')
         else:
             jenkins_url_template = self.args.jenkins_baseurl + '?job=%s&token=' + self.args.jenkins_apitoken
             for k in status_current:
