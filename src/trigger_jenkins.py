@@ -10,7 +10,9 @@ import csv
 import json
 import logging
 import os
+import re
 import requests
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import time
 
 
@@ -28,6 +30,7 @@ class TriggerJenkins:
         self.COMMENTKEY = "#Jenkins Webhook"
         FORMAT = '%(asctime)-15s %(message)s'
         logging.basicConfig(format=FORMAT)
+        requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
     def get_args(self):
         self.parser = argparse.ArgumentParser(
@@ -41,6 +44,7 @@ class TriggerJenkins:
         self.parser.add_argument('-j', '--jenkins-baseurl', dest='jenkins_baseurl',
                                  default='http://localhost:8080/buildByToken/build',
                                  help='Jenkins build trigger path')
+        self.parser.add_argument('-N', '--nosslcertverify', action='store_true')
         self.parser.add_argument('-t', '--jenkins-apitoken', dest='jenkins_apitoken')
         self.parser.add_argument('-v', '--verbose', action='store_true')
         self.parser.add_argument('-w', '--webhook-proxy', dest='webhook_proxy',
@@ -52,13 +56,14 @@ class TriggerJenkins:
             print('jenkins-baseurl:' + self.args.jenkins_baseurl)
             print('jenkins-apitoken:' + self.args.jenkins_apitoken)
             print('webhook-proxy:' + self.args.webhook_proxy)
+        self.args.sslcert_verify = False if self.args.nosslcertverify else True
 
 
     def read_config(self):
         with self.args.config as fd:
             self.gh2jenkins_map = {}
             for line in fd.readlines():
-                if line.startswith('#') or line == '':
+                if line.startswith('#') or re.search('^s*$', line):
                     continue
                 (k, v) = line.split()
                 self.gh2jenkins_map[k] = v
@@ -87,7 +92,7 @@ class TriggerJenkins:
                 fd.write(json.dumps(status_current, indent=4))
 
     def get_commit_messages(self):
-        response = requests.get(self.args.webhook_proxy)
+        response = requests.get(self.args.webhook_proxy, verify=self.args.sslcert_verify)
         logging.debug(self.args.webhook_proxy + ' HTTP ' + str(response.status_code))
         if response.status_code >= 400:
             msg = 'Request to %s failed: %s' % (self.args.webhook_proxy, response.text)
