@@ -108,7 +108,9 @@ class TriggerJenkins:
                 return
         try:
             jenkins_job = self.gh2jenkins_map[branchpath]
-            logging.info('triggering Jenkins build at ' + url_template % jenkins_job)
+            jenkins_trigger_url = url_template % jenkins_job
+            logging.info('triggering Jenkins build at ' + jenkins_trigger_url)
+            response = requests.get(jenkins_trigger_url)
         except KeyError:
             logging.error('No config entry for %s' % branchpath)
 
