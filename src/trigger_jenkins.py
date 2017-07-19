@@ -42,10 +42,16 @@ class TriggerJenkins:
                                  default='http://localhost:8080/buildByToken/build',
                                  help='Jenkins build trigger path')
         self.parser.add_argument('-t', '--jenkins-apitoken', dest='jenkins_apitoken')
+        self.parser.add_argument('-v', '--verbose', action='store_true')
         self.parser.add_argument('-w', '--webhook-proxy', dest='webhook_proxy',
                                  default='http://localhost:8081/status',
                                  help='Webhook proxy status page URL')
         self.args = self.parser.parse_args()
+        if self.args.verbose:
+            print('datadir:' + self.args.datadir)
+            print('jenkins-baseurl:' + self.args.jenkins_baseurl)
+            print('jenkins-apitoken:' + self.args.jenkins_apitoken)
+            print('webhook-proxy:' + self.args.webhook_proxy)
 
 
     def read_config(self):
@@ -56,6 +62,7 @@ class TriggerJenkins:
                     continue
                 (k, v) = line.split()
                 self.gh2jenkins_map[k] = v
+                if self.args.verbose: print('config:' + line)
 
     def poll_and_trigger(self):
         previous_status_file = os.path.join(self.args.datadir, '.status_previous.json')
@@ -68,7 +75,7 @@ class TriggerJenkins:
         if status_current == status_prev:
             logging.info('nothing new')
         else:
-            jenkins_url_template = self.args.jenkins_baseurl + '?job=%s&?token=' + self.args.jenkins_apitoken
+            jenkins_url_template = self.args.jenkins_baseurl + '?job=%s&token=' + self.args.jenkins_apitoken
             for k in status_current:
                 if k != self.COMMENTKEY:
                     logging.debug('reading commit message: ' + k + str(status_current[k]))

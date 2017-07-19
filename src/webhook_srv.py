@@ -128,7 +128,7 @@ class AppHandler():
     def update_aggregate(self):
         counter = 0
         for cmf in self.get_commit_messages_files():
-            cm = json.load(open(cmf))
+            cm = json.load(open(cmf, encoding='utf-8'))
             repoowner = cm['repository']['owner']['name']
             reponame = cm['repository']['name']
             branch = cm['ref'].split('/')[-1]
