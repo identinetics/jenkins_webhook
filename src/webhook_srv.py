@@ -85,7 +85,7 @@ class AppHandler():
         return resp(environ, start_response)
 
     def get_handler(self, req):
-        response_contents = json.dumps(self.all_commits)
+        response_contents = json.dumps(self.all_commits, indent=4)
         return BaseResponse(response_contents,
                             mimetype='application/json',
                             direct_passthrough=False)
