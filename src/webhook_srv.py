@@ -110,6 +110,9 @@ class AppHandler():
             commit_message = json.loads(post_data)
         except json.decoder.JSONDecodeError as e:
             print('Cannot decode JSON payload', e.args[0], file=sys.stderr)
+            print('=' * 20, file=sys.stderr)
+            print(post_data, file=sys.stderr)
+            print('=' * 20, file=sys.stderr)
             return 'NOK'
         repoowner = commit_message['repository']['owner']['name']
         reponame = commit_message['repository']['name']
