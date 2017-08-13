@@ -120,12 +120,12 @@ class AppHandler():
             return 'NOK'
         try:
             repoowner = commit_message['repository']['owner']['name']
-        except:
+        except KeyError as e:
             self.print_error_with_postdata("Missing key ['repository']['owner']['name']", post_data, e)
             return 'NOK'
         try:
             reponame = commit_message['repository']['name']
-        except:
+        except KeyError as e:
             self.print_error_with_postdata("Missing key ['repository']['name']", post_data, e)
         if repoowner in self.authz_owners:
             branch = commit_message['ref'].split('/')[-1] + '.json'
