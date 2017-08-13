@@ -1,0 +1,46 @@
+{
+    "identinetics/docker-openldap/tw_etd": {
+        "commit_msg": "etx-storage",
+        "commit_id": "3b782eb5d27bc14cf4e9d11f2acc0dc1cc2df5ee",
+        "commit_ts": "2017-07-26T07:56:13+02:00"
+    },
+    "#Jenkins Webhook": {
+        "status": "8 commit messages available",
+        "timestamp": "2017-07-26T15:53:44"
+    },
+    "identinetics/dscripts/master": {
+        "commit_msg": "fix do_not_build, etc.",
+        "commit_id": "49acae380fc413d2580b1de0f2b9d0a7db747ac4",
+        "commit_ts": "2017-07-25T15:20:06+02:00"
+    },
+    "edushare-at/docker-etl/master": {
+        "commit_msg": "write etlTimestamp (needs pytz)\n\nUpdate to latest py-etl",
+        "commit_id": "c7cf19a944c8293072519686db9eeec087a346f8",
+        "commit_ts": "2017-07-26T17:52:55+02:00"
+    },
+    "identinetics/dscripts-test/master": {
+        "commit_msg": "update pipeline",
+        "commit_id": "0f4401c62ae03ce7f58254c162831f754523acfd",
+        "commit_ts": "2017-07-25T08:23:15+02:00"
+    },
+    "edushare-at/docker-etl/tw_dev": {
+        "commit_msg": "write etlTimestamp (needs pytz)",
+        "commit_id": "13b982756f44fb5aac6524e38a05105539909fcb",
+        "commit_ts": "2017-07-26T17:15:52+02:00"
+    },
+    "identinetics/docker-openldap/master": {
+        "commit_msg": "Don't use a default slapd.conf",
+        "commit_id": "1d538e06ff1793f0bee13be57d34dd2279346c8b",
+        "commit_ts": "2017-07-26T16:20:19+02:00"
+    },
+    "edushare-at/docker-etl/rh_dev": {
+        "commit_msg": "make ci working",
+        "commit_id": "8ada9a32ad93a126966aadc89fdab509b0c773c5",
+        "commit_ts": "2017-07-19T21:14:35+02:00"
+    },
+    "identinetics/docker-openldap/rh_citest": {
+        "commit_msg": "Update trigger_webhook.test",
+        "commit_id": "ce0150c496cb0cdae4afb9c0f59eef2fefd7091d",
+        "commit_ts": "2017-07-19T12:45:18+02:00"
+    }
+}

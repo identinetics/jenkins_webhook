@@ -2,13 +2,20 @@
 
 import argparse
 import datetime
+import hashlib
 import json
 import os
 import sys
 import time
+import traceback
 import werkzeug.serving
 from werkzeug.wrappers import BaseRequest, BaseResponse
 
+class InvalidCommitmessage(Exception):
+    pass
+
+class NotACommitMessage(Exception):
+    pass
 
 def main():
     invocation = Invocation()
@@ -74,13 +81,17 @@ class AppHandler():
 
     def wsgi_application(self, environ, start_response):
         req = BaseRequest(environ)
-        if req.method == 'GET' and req.path.strip('/') == self.args.getpath:
+        reqpath = req.path.rstrip('/')
+        getpath = self.args.getpath.rstrip('/')
+        postpath = self.args.postpath.rstrip('/')
+        if req.method == 'GET' and reqpath == getpath:
             resp = self.get_handler(req)
-        elif req.method == 'POST' and req.path.strip('/') == self.args.postpath:
-            resp = self.post_handler(req)
+        elif req.method == 'POST' and reqpath == postpath:
+                resp = self.post_handler(req)
         else:
             resp = BaseResponse('Invalid path (%s) or HTTP method (%s) not supported' % (req.path, req.method),
                                 mimetype='text/plain')
+            if self.args.verbose: print('{}: reqpath: {}; postpath: {}'.format(req.method, reqpath, postpath))
             resp.status_code = 400
         return resp(environ, start_response)
 
@@ -93,72 +104,100 @@ class AppHandler():
     def post_handler(self, req):
         length = int(req.headers.environ['CONTENT_LENGTH'])
         post_data = req.data.decode(req.charset)
-        result = self.save_commit_message(post_data)
-        if result == 'OK':
-            self.update_aggregate()
-            response_contents = '["OK"]'
-            return BaseResponse(response_contents,
-                                mimetype='application/json',
-                                direct_passthrough=False)
-        else:
+        print('*' * 20, file=sys.stderr)
+        print(post_data, file=sys.stderr)
+        print('*' * 20, file=sys.stderr)
+        try:
+            result = self.save_commit_message(post_data)
+        except InvalidCommitmessage:
             response = BaseResponse('Invalid requst format or repo owner not authorized', mimetype='text/plain')
             response.status_code = 403
             return response
+        except NotACommitMessage:
+            response = BaseResponse('Message ignored: not a github commit message', mimetype='text/plain')
+            response.status_code = 200
+            return response
 
-    def print_error_with_postdata(self, msg, post_data, e):
-        print(msg, file=sys.stderr)
-        print('=' * 20, file=sys.stderr)
-        print(post_data, file=sys.stderr)
-        print('=' * 20, file=sys.stderr)
-        print(e.args[0], file=sys.stderr)
+        self.update_aggregate()
+        response_contents = '["OK"]'
+        return BaseResponse(response_contents,
+                            mimetype='application/json',
+                            direct_passthrough=False)
 
     def save_commit_message(self, post_data) -> str:
         try:
             commit_message = json.loads(post_data)
         except json.decoder.JSONDecodeError as e:
-            self.print_error_with_postdata('JSON decode error', post_data, e)
-            return 'NOK'
+            self.print_error_with_data('JSON decode error', post_data, e)
+            raise InvalidCommitmessage
+        (repoowner, reponame, branch) = self.get_repo_and_branch(commit_message)
         try:
-            repoowner = commit_message['repository']['owner']['name']
-        except KeyError as e:
-            self.print_error_with_postdata("Missing key ['repository']['owner']['name']", post_data, e)
-            return 'NOK'
-        try:
-            reponame = commit_message['repository']['name']
-        except KeyError as e:
-            self.print_error_with_postdata("Missing key ['repository']['name']", post_data, e)
+            _ = commit_message['head_commit']
+        except KeyError:
+            raise NotACommitMessage
         if repoowner in self.authz_owners:
-            branch = commit_message['ref'].split('/')[-1] + '.json'
             filedir = os.path.join(self.args.datadir, repoowner, reponame)
             filepath = os.path.join(filedir, branch)
             os.makedirs(filedir, exist_ok=True)
             with open(filepath, 'w', encoding='utf-8') as fd:
                 fd.write(post_data)
-            return 'OK'
         else:
             print('Repo owner %s not authorized' % repoowner, file=sys.stderr)
-            return 'NOK'
+            raise InvalidCommitmessage
+
+    def get_repo_and_branch(self, commit_message) -> tuple:
+        try:
+            (repoowner, reponame) = commit_message['repository']['full_name'].split('/')
+        except KeyError as e:
+            try:
+                repoowner = commit_message['repository']['owner']['name']
+            except KeyError as e:
+                self.print_error_with_data("Missing key ['repository']['owner']['name']", commit_message, e)
+                raise
+            try:
+                reponame = commit_message['repository']['name']
+            except KeyError as e:
+                self.print_error_with_data("Missing key ['repository']['name']", commit_message, e)
+                raise
+        try:
+            branch = commit_message['ref'].split('/')[-1] + '.json'
+        except KeyError:
+            branch = commit_message['repository']['default_branch']
+        return (repoowner, reponame, branch)
+
+
+    def print_error_with_data(self, msg, post_data, e):
+        print(msg, file=sys.stderr)
+        print('=' * 20, file=sys.stderr)
+        print(post_data, file=sys.stderr)
+        print('=' * 20, file=sys.stderr)
+        print(e.args[0], file=sys.stderr)
+        traceback.print_exc()
+
+    #def is_commit_msg(self, cm):
+    #    return True
 
     def update_aggregate(self):
         counter = 0
-        for cmf in self.get_commit_messages_files():
-            cm = json.load(open(cmf, encoding='utf-8'))
-            repoowner = cm['repository']['owner']['name']
-            reponame = cm['repository']['name']
-            branch = cm['ref'].split('/')[-1]
-            commit_id = cm['head_commit']['id']
-            commit_msg = cm['head_commit']['message']
-            commit_ts = cm['head_commit']['timestamp']
-            branchpath = repoowner + '/' + reponame + '/' + branch
-            commit_data = {'commit_id': commit_id,
-                           'commit_msg': commit_msg,
-                           'commit_ts': commit_ts}
-            self.all_commits[branchpath] = commit_data
-            counter += 1
-        self.all_commits[self.COMMENTKEY] = {
-                "status": "%d commit messages available" % counter,
-                "timestamp": now_iso8601()}
-        json.dump(self.all_commits, open(self.aggregate_path, 'w', encoding='utf-8'), indent=4)
+        try:
+            for cmf in self.get_commit_messages_files():
+                cm = json.load(open(cmf, encoding='utf-8'))
+                (repoowner, reponame, branch) = self.get_repo_and_branch(cm)
+                commit_id = cm['head_commit']['id']
+                commit_msg = cm['head_commit']['message']
+                commit_ts = cm['head_commit']['timestamp']
+                branchpath = repoowner + '/' + reponame + '/' + branch
+                commit_data = {'commit_id': commit_id,
+                               'commit_msg': commit_msg,
+                               'commit_ts': commit_ts}
+                self.all_commits[branchpath] = commit_data
+                counter += 1
+            self.all_commits[self.COMMENTKEY] = {
+                    "status": "%d commit messages available" % counter,
+                    "timestamp": now_iso8601()}
+            json.dump(self.all_commits, open(self.aggregate_path, 'w', encoding='utf-8'), indent=4)
+        except Exception as e:
+            self.print_error_with_data('Error when updating aggregate', cm, e)
 
 
     def get_commit_messages_files(self) -> set:
