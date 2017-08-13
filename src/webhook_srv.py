@@ -105,17 +105,28 @@ class AppHandler():
             response.status_code = 403
             return response
 
+    def print_error_with_postdata(self, msg, post_data, e):
+        print(msg, file=sys.stderr)
+        print('=' * 20, file=sys.stderr)
+        print(post_data, file=sys.stderr)
+        print('=' * 20, file=sys.stderr)
+        print(e.args[0], file=sys.stderr)
+
     def save_commit_message(self, post_data) -> str:
         try:
             commit_message = json.loads(post_data)
         except json.decoder.JSONDecodeError as e:
-            print('Cannot decode JSON payload', e.args[0], file=sys.stderr)
-            print('=' * 20, file=sys.stderr)
-            print(post_data, file=sys.stderr)
-            print('=' * 20, file=sys.stderr)
+            self.print_error_with_postdata('JSON decode error', post_data, e)
             return 'NOK'
-        repoowner = commit_message['repository']['owner']['name']
-        reponame = commit_message['repository']['name']
+        try:
+            repoowner = commit_message['repository']['owner']['name']
+        except:
+            self.print_error_with_postdata("Missing key ['repository']['owner']['name']", post_data, e)
+            return 'NOK'
+        try:
+            reponame = commit_message['repository']['name']
+        except:
+            self.print_error_with_postdata("Missing key ['repository']['name']", post_data, e)
         if repoowner in self.authz_owners:
             branch = commit_message['ref'].split('/')[-1] + '.json'
             filedir = os.path.join(self.args.datadir, repoowner, reponame)
