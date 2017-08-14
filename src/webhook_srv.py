@@ -137,7 +137,7 @@ class AppHandler():
             raise NotACommitMessage
         if repoowner in self.authz_owners:
             filedir = os.path.join(self.args.datadir, repoowner, reponame)
-            filepath = os.path.join(filedir, branch)
+            filepath = os.path.join(filedir, branch + '.json')
             os.makedirs(filedir, exist_ok=True)
             with open(filepath, 'w', encoding='utf-8') as fd:
                 fd.write(post_data)
@@ -160,7 +160,7 @@ class AppHandler():
                 self.print_error_with_data("Missing key ['repository']['name']", commit_message, e)
                 raise
         try:
-            branch = commit_message['ref'].split('/')[-1] + '.json'
+            branch = commit_message['ref'].split('/')[-1]
         except KeyError:
             branch = commit_message['repository']['default_branch']
         return (repoowner, reponame, branch)
