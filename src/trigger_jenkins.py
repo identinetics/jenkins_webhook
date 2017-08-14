@@ -52,10 +52,12 @@ class TriggerJenkins:
                                  help='Webhook proxy status page URL')
         self.args = self.parser.parse_args()
         if self.args.verbose:
-            print('datadir:' + self.args.datadir)
-            print('jenkins-baseurl:' + self.args.jenkins_baseurl)
-            print('jenkins-apitoken:' + self.args.jenkins_apitoken)
-            print('webhook-proxy:' + self.args.webhook_proxy)
+            logger = logging.getLogger()
+            logger.setLevel(logging.DEBUG)
+        logging.debug('datadir:' + self.args.datadir)
+        logging.debug('jenkins-baseurl:' + self.args.jenkins_baseurl)
+        logging.debug('jenkins-apitoken:' + self.args.jenkins_apitoken)
+        logging.debug('webhook-proxy:' + self.args.webhook_proxy)
         self.args.sslcert_verify = False if self.args.nosslcertverify else True
 
 
@@ -67,15 +69,16 @@ class TriggerJenkins:
                     continue
                 (k, v) = line.split()
                 self.gh2jenkins_map[k] = v
-                if self.args.verbose: print('config:' + line)
+                logging.debug('config:' + line)
 
     def poll_and_trigger(self):
         previous_status_file = os.path.join(self.args.datadir, '.status_previous.json')
         try:
             status_prev = json.load(open(previous_status_file))
+            logging.debug('previous status:' + str(status_prev))
         except:
             status_prev = {}
-            logging.debug('previous status:' + str(status_prev))
+            logging.debug('no previous status found')
         status_current = self.get_commit_messages()
         if status_current == status_prev:
             logging.debug('nothing new')
@@ -109,7 +112,7 @@ class TriggerJenkins:
         try:
             jenkins_job = self.gh2jenkins_map[branchpath]
             jenkins_trigger_url = url_template % jenkins_job
-            logging.info('triggering Jenkins build at ' + jenkins_trigger_url)
+            logging.info('triggering Jenkins build for {} at {}'.format(branchpath, jenkins_trigger_url))
             response = requests.get(jenkins_trigger_url)
         except KeyError:
             logging.error('No config entry for %s' % branchpath)
