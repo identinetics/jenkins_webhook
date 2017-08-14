@@ -48,7 +48,7 @@ class TriggerJenkins:
         self.parser.add_argument('-N', '--nosslcertverify', action='store_true')
         self.parser.add_argument('-p', '--password', required=True,
                                  help='Use API-Token from user settings as password')
-        self.parser.add_argument('-t', '--jenkins-apitoken', dest='jenkins_apitoken')
+        #self.parser.add_argument('-t', '--jenkins-apitoken', dest='jenkins_apitoken')
         self.parser.add_argument('-u', '--user', required=True)
         self.parser.add_argument('-v', '--verbose', action='store_true')
         self.parser.add_argument('-w', '--webhook-proxy', dest='webhook_proxy',
@@ -60,7 +60,7 @@ class TriggerJenkins:
             logger.setLevel(logging.DEBUG)
         logging.debug('datadir:' + self.args.datadir)
         logging.debug('jenkins-baseurl:' + self.args.jenkins_baseurl)
-        logging.debug('jenkins-apitoken:' + self.args.jenkins_apitoken)
+        #logging.debug('jenkins-apitoken:' + self.args.jenkins_apitoken)
         logging.debug('webhook-proxy:' + self.args.webhook_proxy)
         self.args.sslcert_verify = False if self.args.nosslcertverify else True
 
@@ -73,15 +73,15 @@ class TriggerJenkins:
                     continue
                 (k, v) = line.split()
                 self.gh2jenkins_map[k] = v
-                logging.debug('config:' + line)
+                logging.debug('config:' + line.rstrip())
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
     def connect_jenkins(self):
         logging.debug('connecting to %s as %s' % (self.args.jenkins_baseurl, self.args.user))
-        server = jenkins.Jenkins(self.args.jenkins_baseurl,
+        self.server = jenkins.Jenkins(self.args.jenkins_baseurl,
                                  username=self.args.user,
                                  password=self.args.password)
-        job_list = server.get_jobs()
+        job_list = self.server.get_jobs()
         logging.debug('found {} jobs'.format(len(job_list)))
         self.job_set = set()
         for j in job_list:
@@ -105,10 +105,7 @@ class TriggerJenkins:
                     #jenkins_url_template = '{}/job/%s/build?token={}'.format(
                     #    self.args.jenkins_baseurl,
                     #    self.args.jenkins_apitoken)
-                    self.trigger_jenkins_if_new_or_changed(k,
-                                                           status_current,
-                                                           status_prev,
-                                                           jenkins_url_template)
+                    self.trigger_jenkins_if_new_or_changed(k, status_current, status_prev)
             with open(previous_status_file, 'w', encoding='utf-8') as fd:
                 fd.write(json.dumps(status_current, indent=4))
 
@@ -123,21 +120,23 @@ class TriggerJenkins:
             cm = json.loads(response.text)
             return cm
 
-    def trigger_jenkins_if_new_or_changed(self, branchpath, status_current, status_prev, url_template):
+    def trigger_jenkins_if_new_or_changed(self, branchpath, status_current, status_prev, url_template=None):
         # Jobs can be triggered via API (not for multibranch pipelines), CLI, API/buildbytoken-Plugin
         # Web-URL (requires to pass crumb) or python-jenkins API. This version uses the py API.
         if branchpath in status_prev:
             if status_current[branchpath] == status_prev[branchpath]:
+                logging.debug('no change found for ' + branchpath)
                 return
         try:
             jenkins_job = self.gh2jenkins_map[branchpath]
             if jenkins_job not in self.job_set:
                 logging.error('Job %s not found in Jenkins' % jenkins_job)
                 raise KeyError
-            jenkins_trigger_url = url_template % jenkins_job
-            logging.info('triggering Jenkins build for {} at {}'.format(branchpath, jenkins_trigger_url))
+            #jenkins_trigger_url = url_template % jenkins_job
+            #logging.info('triggering Jenkins build for {} at {}'.format(branchpath, jenkins_trigger_url))
             #response = requests.get(jenkins_trigger_url, auth=(self.args.user, self.args.password)) API version
-            server.build_job(jenkins_job)
+            self.server.build_job(jenkins_job)
+            logging.info('triggering build for ' + branchpath)
         except KeyError:
             logging.error('No config entry for %s' % branchpath)
 
