@@ -15,6 +15,7 @@ import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import time
 
+import jenkins
 
 def main():
     logger = logging.getLogger()
@@ -22,6 +23,7 @@ def main():
     tj = TriggerJenkins()
     tj.get_args()
     tj.read_config()
+    tj.connect_jenkins()
     tj.poll_and_trigger()
 
 
@@ -30,7 +32,6 @@ class TriggerJenkins:
         self.COMMENTKEY = "#Jenkins Webhook"
         FORMAT = '%(asctime)-15s %(message)s'
         logging.basicConfig(format=FORMAT)
-        requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
     def get_args(self):
         self.parser = argparse.ArgumentParser(
@@ -74,6 +75,16 @@ class TriggerJenkins:
                 self.gh2jenkins_map[k] = v
                 logging.debug('config:' + line)
 
+    def connect_jenkins(self):
+        requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+        server = jenkins.Jenkins(self.args.jenkins_baseurl,
+                                 username=self.args.user,
+                                 password=self.args.password)
+        job_list = server.get_jobs()
+        self.job_set = set()
+        for j in job_list:
+            self.job_set.add(j['name'])
+
     def poll_and_trigger(self):
         previous_status_file = os.path.join(self.args.datadir, '.status_previous.json')
         try:
@@ -89,9 +100,9 @@ class TriggerJenkins:
             for k in status_current:
                 if k != self.COMMENTKEY:
                     logging.debug('reading commit message: ' + k + str(status_current[k]))
-                    jenkins_url_template = '{}/job/%s/build?token={}'.format(
-                        self.args.jenkins_baseurl,
-                        self.args.jenkins_apitoken)
+                    #jenkins_url_template = '{}/job/%s/build?token={}'.format(
+                    #    self.args.jenkins_baseurl,
+                    #    self.args.jenkins_apitoken)
                     self.trigger_jenkins_if_new_or_changed(k,
                                                            status_current,
                                                            status_prev,
@@ -111,14 +122,20 @@ class TriggerJenkins:
             return cm
 
     def trigger_jenkins_if_new_or_changed(self, branchpath, status_current, status_prev, url_template):
+        # Jobs can be triggered via API (not for multibranch pipelines), CLI, API/buildbytoken-Plugin
+        # Web-URL (requires to pass crumb) or python-jenkins API. This version uses the py API.
         if branchpath in status_prev:
             if status_current[branchpath] == status_prev[branchpath]:
                 return
         try:
             jenkins_job = self.gh2jenkins_map[branchpath]
+            if jenkins_job not in self.job_set:
+                logging.error('Job %s not found in Jenkins' % jenkins_job)
+                raise KeyError
             jenkins_trigger_url = url_template % jenkins_job
             logging.info('triggering Jenkins build for {} at {}'.format(branchpath, jenkins_trigger_url))
-            response = requests.get(jenkins_trigger_url, auth=(self.args.user, self.args.password))
+            #response = requests.get(jenkins_trigger_url, auth=(self.args.user, self.args.password)) API version
+            server.build_job(jenkins_job)
         except KeyError:
             logging.error('No config entry for %s' % branchpath)
 
