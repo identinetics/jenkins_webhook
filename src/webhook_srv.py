@@ -44,19 +44,16 @@ def now_iso8601():
 class Invocation:
     def __init__(self, testargs=None):
         self.parser = argparse.ArgumentParser(description='github webhook proxy')
-        self.parser.add_argument('-H', '--hostname', dest='hostname', default='0.0.0.0',
-                                 help='Service host/IP')
-        self.parser.add_argument('-p', '--port', dest='port', type=int, default=8081, help='Service')
+        self.parser.add_argument('-H', '--hostname', default='0.0.0.0', help='Service host/IP')
+        self.parser.add_argument('-p', '--port', type=int, default=8081, help='Service')
         self.parser.add_argument('-d', '--debug', action='store_true', help='activate Werkzeug debug')
         default_datadir = os.path.join(os.path.expanduser("~"), 'jenkins-webhook/data')
-        self.parser.add_argument('-D', '--datadir', dest='datadir', default=default_datadir,
+        self.parser.add_argument('-D', '--datadir', default=default_datadir,
                                  help='Directory to store webhook payloads')
-        self.parser.add_argument('-o', '--ownerlist', dest='ownerlist', default='', required=True,
+        self.parser.add_argument('-o', '--ownerlist', default='', required=True,
                                  help='List of authorized github repo owners, separated with commas, no whitespace')
-        self.parser.add_argument('-G', '--getpath', dest='getpath', default='/status',
-                                 help='API path for GET operations')
-        self.parser.add_argument('-P', '--postpath', dest='postpath', default='/github',
-                                 help='API path for POST operations')
+        self.parser.add_argument('-G', '--getpath', default='/status', help='API path for GET operations')
+        self.parser.add_argument('-P', '--postpath', default='/github', help='API path for POST operations')
         self.parser.add_argument('-v', '--verbose', action='store_true')
 
         self.args = self.parser.parse_args()
