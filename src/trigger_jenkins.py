@@ -74,13 +74,15 @@ class TriggerJenkins:
                 (k, v) = line.split()
                 self.gh2jenkins_map[k] = v
                 logging.debug('config:' + line)
+        #requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
     def connect_jenkins(self):
-        requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+        logging.debug('connecting to %s as %s' % (self.args.jenkins_baseurl, self.args.user))
         server = jenkins.Jenkins(self.args.jenkins_baseurl,
                                  username=self.args.user,
                                  password=self.args.password)
         job_list = server.get_jobs()
+        logging.debug('listed {} jobs' % len(job_list))
         self.job_set = set()
         for j in job_list:
             self.job_set.add(j['name'])
