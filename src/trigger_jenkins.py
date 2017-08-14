@@ -82,7 +82,7 @@ class TriggerJenkins:
                                  username=self.args.user,
                                  password=self.args.password)
         job_list = server.get_jobs()
-        logging.debug('listed {} jobs' % len(job_list))
+        logging.debug('found {} jobs'.format(len(job_list)))
         self.job_set = set()
         for j in job_list:
             self.job_set.add(j['name'])
