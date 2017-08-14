@@ -19,7 +19,7 @@ class NotACommitMessage(Exception):
 
 def main():
     invocation = Invocation()
-    if True or invocation.args.verbose:
+    if invocation.args.verbose:
         print(now_iso8601(), "Server starting %s:%s" % (invocation.args.hostname, invocation.args.port))
         print('getpath: %s' % invocation.args.getpath.strip('/'))
         print('postpath: %s' % invocation.args.postpath.strip('/'))

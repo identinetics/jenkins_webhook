@@ -37,15 +37,18 @@ class TriggerJenkins:
             description='Trigger jenkins builds with webhook proxy polling')
         default_datadir = os.path.join(os.path.expanduser("~"), 'jenkins-webhook/data')
         default_configfile = os.path.join(default_datadir, '.config.json')
-        self.parser.add_argument('-c', '--config', dest='config', type=argparse.FileType('r'),
+        self.parser.add_argument('-c', '--config', type=argparse.FileType('r'),
                                  required=True, default=default_configfile)
-        self.parser.add_argument('-D', '--datadir', dest='datadir', default=default_datadir,
+        self.parser.add_argument('-D', '--datadir', default=default_datadir,
                                  help='Directory to store status page')
         self.parser.add_argument('-j', '--jenkins-baseurl', dest='jenkins_baseurl',
                                  default='http://localhost:8080/buildByToken/build',
                                  help='Jenkins build trigger path')
         self.parser.add_argument('-N', '--nosslcertverify', action='store_true')
+        self.parser.add_argument('-p', '--password', required=True,
+                                 help='Use API-Token from user settings as password')
         self.parser.add_argument('-t', '--jenkins-apitoken', dest='jenkins_apitoken')
+        self.parser.add_argument('-u', '--user', required=True)
         self.parser.add_argument('-v', '--verbose', action='store_true')
         self.parser.add_argument('-w', '--webhook-proxy', dest='webhook_proxy',
                                  default='http://localhost:8081/status',
@@ -83,10 +86,12 @@ class TriggerJenkins:
         if status_current == status_prev:
             logging.debug('nothing new')
         else:
-            jenkins_url_template = self.args.jenkins_baseurl + '?job=%s&token=' + self.args.jenkins_apitoken
             for k in status_current:
                 if k != self.COMMENTKEY:
                     logging.debug('reading commit message: ' + k + str(status_current[k]))
+                    jenkins_url_template = '{}/job/%s/build?&token={}'.format(
+                        self.args.jenkins_baseurl,
+                        self.args.jenkins_apitoken)
                     self.trigger_jenkins_if_new_or_changed(k,
                                                            status_current,
                                                            status_prev,
@@ -113,7 +118,7 @@ class TriggerJenkins:
             jenkins_job = self.gh2jenkins_map[branchpath]
             jenkins_trigger_url = url_template % jenkins_job
             logging.info('triggering Jenkins build for {} at {}'.format(branchpath, jenkins_trigger_url))
-            response = requests.get(jenkins_trigger_url)
+            response = requests.get(jenkins_trigger_url, auth=(self.args.user, self.args.password))
         except KeyError:
             logging.error('No config entry for %s' % branchpath)
 
