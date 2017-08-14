@@ -74,7 +74,7 @@ class TriggerJenkins:
                 (k, v) = line.split()
                 self.gh2jenkins_map[k] = v
                 logging.debug('config:' + line)
-        #requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+        requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
     def connect_jenkins(self):
         logging.debug('connecting to %s as %s' % (self.args.jenkins_baseurl, self.args.user))
