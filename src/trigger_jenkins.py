@@ -89,7 +89,7 @@ class TriggerJenkins:
             for k in status_current:
                 if k != self.COMMENTKEY:
                     logging.debug('reading commit message: ' + k + str(status_current[k]))
-                    jenkins_url_template = '{}/job/%s/build?&token={}'.format(
+                    jenkins_url_template = '{}/job/%s/build?token={}'.format(
                         self.args.jenkins_baseurl,
                         self.args.jenkins_apitoken)
                     self.trigger_jenkins_if_new_or_changed(k,
