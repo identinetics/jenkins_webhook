@@ -48,7 +48,7 @@ class TriggerJenkins:
         self.parser.add_argument('-N', '--nosslcertverify', action='store_true')
         self.parser.add_argument('-p', '--password', required=True,
                                  help='Use API-Token from user settings as password')
-        #self.parser.add_argument('-t', '--jenkins-apitoken', dest='jenkins_apitoken')
+        self.parser.add_argument('-t', '--jenkins-apitoken', dest='jenkins_apitoken')
         self.parser.add_argument('-u', '--user', required=True)
         self.parser.add_argument('-v', '--verbose', action='store_true')
         self.parser.add_argument('-w', '--webhook-proxy', dest='webhook_proxy',
@@ -60,7 +60,7 @@ class TriggerJenkins:
             logger.setLevel(logging.DEBUG)
         logging.debug('datadir:' + self.args.datadir)
         logging.debug('jenkins-baseurl:' + self.args.jenkins_baseurl)
-        #logging.debug('jenkins-apitoken:' + self.args.jenkins_apitoken)
+        logging.debug('jenkins-apitoken:' + self.args.jenkins_apitoken)
         logging.debug('webhook-proxy:' + self.args.webhook_proxy)
         self.args.sslcert_verify = False if self.args.nosslcertverify else True
 
@@ -135,7 +135,10 @@ class TriggerJenkins:
             #jenkins_trigger_url = url_template % jenkins_job
             #logging.info('triggering Jenkins build for {} at {}'.format(branchpath, jenkins_trigger_url))
             #response = requests.get(jenkins_trigger_url, auth=(self.args.user, self.args.password)) API version
-            self.server.build_job(jenkins_job)
+            if self.args.jenkins_apitoken:
+                self.server.build_job(jenkins_job, token=self.args.jenkins_apitoken)
+            else:
+                self.server.build_job(jenkins_job)
             logging.info('triggering build for ' + branchpath)
         except KeyError:
             logging.error('No config entry for %s' % branchpath)
