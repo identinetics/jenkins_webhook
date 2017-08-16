@@ -60,7 +60,7 @@ class TriggerJenkins:
             logger.setLevel(logging.DEBUG)
         logging.debug('datadir:' + self.args.datadir)
         logging.debug('jenkins-baseurl:' + self.args.jenkins_baseurl)
-        logging.debug('jenkins-apitoken:' + (self.args.jenkins_apitoken or ''))
+        #logging.debug('jenkins-apitoken:' + (self.args.jenkins_apitoken or ''))
         logging.debug('webhook-proxy:' + self.args.webhook_proxy)
         self.args.sslcert_verify = False if self.args.nosslcertverify else True
 
